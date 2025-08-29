@@ -1,115 +1,246 @@
-// src/app/page.js
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { BookOpen, Brain, Calendar } from "lucide-react";
 
+const APPS_SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; // <-- replace
+
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("idle"); // idle | sending | ok | error
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!email) return;
+    setStatus("sending");
+    try {
+      const res = await fetch(APPS_SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (!res.ok) throw new Error("Failed");
+      setStatus("ok");
+      setEmail("");
+    } catch (err) {
+      setStatus("error");
+    }
+  }
+
   return (
-    <main className="bg-gradient-to-b from-purple-50 via-pink-50 to-white text-gray-900 min-h-screen">
-      {/* Navbar */}
-      <nav className="flex justify-between items-center px-8 py-4 shadow-sm bg-white/80 backdrop-blur-md fixed w-full z-50">
-        <h1 className="text-2xl font-bold text-purple-600">UniLearn</h1>
-        <div className="space-x-6 hidden md:flex">
-          <a href="#" className="hover:text-purple-600">Home</a>
-          <a href="#features" className="hover:text-purple-600">Features</a>
-          <a href="#about" className="hover:text-purple-600">About</a>
-          <a href="#contact" className="hover:text-purple-600">Contact</a>
-        </div>
-        <button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-4 py-2 rounded-xl hover:opacity-90">
-          Get Started
-        </button>
-      </nav>
+    <main className="min-h-screen">
+      {/* HERO */}
+      <section className="relative overflow-hidden">
+        {/* Gradient backdrop */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-400 via-fuchsia-400 to-rose-400 opacity-30" />
 
-      {/* Hero Section with Video Background */}
-      <section className="relative text-center py-32 px-6">
-        {/* Background video */}
-        <video
+        {/* Animated blobs */}
+        <div className="pointer-events-none absolute -top-16 -left-16 h-72 w-72 rounded-full bg-fuchsia-400 opacity-30 blur-3xl animate-blob" />
+        <div className="pointer-events-none absolute -bottom-24 right-0 h-80 w-80 rounded-full bg-indigo-400 opacity-30 blur-3xl animate-blob animation-delay-2000" />
+        <div className="pointer-events-none absolute top-20 right-24 h-64 w-64 rounded-full bg-rose-400 opacity-30 blur-3xl animate-blob animation-delay-4000" />
+
+        {/* Optional video background (put /public/hero.mp4 if you have one) */}
+        {/* <video
+          className="absolute inset-0 h-full w-full object-cover opacity-20"
+          src="/hero.mp4"
           autoPlay
-          loop
           muted
+          loop
           playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-        >
-          <source src="/student-bg.mp4" type="video/mp4" />
-        </video>
+        /> */}
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/50 z-0"></div>
+        {/* Content */}
+        <nav className="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+          <div className="flex items-center gap-3">
+            <img src="/unilearn-logo.svg" alt="UniLearn" className="h-9 w-9" />
+            <span className="text-xl font-extrabold tracking-tight bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
+              UniLearn
+            </span>
+          </div>
+          <div className="hidden md:flex items-center gap-8 text-sm">
+            <a href="#features" className="hover:opacity-80">Features</a>
+            <a href="#about" className="hover:opacity-80">About</a>
+            <a href="#cta" className="hover:opacity-80">Get access</a>
+          </div>
+          <a
+            href="#cta"
+            className="rounded-xl bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700"
+          >
+            Get Started
+          </a>
+        </nav>
 
-        {/* Hero content */}
-        <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10"
-        >
-          <h2 className="text-4xl md:text-6xl font-bold text-white drop-shadow-lg">
-            Smarter Learning for Students 🎓
-          </h2>
-          <p className="mt-6 text-lg text-gray-200 max-w-2xl mx-auto">
-            Access syllabuses, past questions, lecture notes, and AI chatbot — all in one app.
+        <header className="relative z-10 mx-auto max-w-6xl px-6 pb-20 pt-10 text-center md:pt-24">
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl font-extrabold leading-tight md:text-6xl"
+          >
+            Smarter learning for{" "}
+            <span className="bg-gradient-to-r from-indigo-600 via-fuchsia-600 to-rose-600 bg-clip-text text-transparent">
+              Nigerian students
+            </span>
+          </motion.h1>
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-700">
+            Access syllabuses, AI-generated past questions, lecture notes, and an AI tutor —
+            everything you need to study better in one app.
           </p>
-          <div className="mt-8 flex justify-center gap-4">
-            <button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white px-6 py-3 rounded-xl hover:opacity-90">
-              Get Started 🚀
-            </button>
-            <button className="bg-white/80 text-purple-600 px-6 py-3 rounded-xl hover:bg-white">
-              Learn More
-            </button>
+
+          <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a
+              href="#cta"
+              className="rounded-2xl bg-indigo-600 px-6 py-3 text-white shadow-lg hover:bg-indigo-700"
+            >
+              Start free
+            </a>
+            <a
+              href="#features"
+              className="rounded-2xl border border-black/10 bg-white/70 px-6 py-3 text-gray-900 hover:bg-white"
+            >
+              See features
+            </a>
           </div>
-        </motion.div>
+
+          {/* Hero “screens” card */}
+          <div className="mx-auto mt-14 max-w-4xl rounded-3xl border border-white/40 bg-white/60 p-2 shadow-xl glass">
+            <img
+              src="/hero-poster.jpg"
+              alt="UniLearn preview"
+              className="h-[360px] w-full rounded-2xl object-cover"
+            />
+          </div>
+        </header>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-gradient-to-r from-purple-100 via-pink-50 to-blue-50">
-        <h3 className="text-3xl font-bold text-center mb-12 text-purple-700">Why UniLearn?</h3>
-        <div className="grid md:grid-cols-3 gap-8 px-8 max-w-6xl mx-auto">
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-            <BookOpen className="h-10 w-10 text-purple-600 mb-4" />
-            <h4 className="text-xl font-semibold mb-2">📚 Full Syllabus</h4>
-            <p className="text-gray-600">Instant access to complete syllabuses for every Nigerian university course.</p>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-            <Brain className="h-10 w-10 text-pink-600 mb-4" />
-            <h4 className="text-xl font-semibold mb-2">🤖 AI Study Bot</h4>
-            <p className="text-gray-600">Chat with an AI tutor anytime you’re stuck on a topic or concept.</p>
-          </div>
-          <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition">
-            <Calendar className="h-10 w-10 text-blue-600 mb-4" />
-            <h4 className="text-xl font-semibold mb-2">📝 Past Questions</h4>
-            <p className="text-gray-600">AI-generated past questions to prepare smarter and faster for exams.</p>
-          </div>
-        </div>
-      </section>
+      {/* FEATURES */}
+      <section id="features" className="mx-auto max-w-6xl px-6 py-20">
+        <h2 className="text-center text-3xl font-bold">Why UniLearn?</h2>
+        <p className="mx-auto mt-2 max-w-2xl text-center text-gray-600">
+          Designed for Nigerian universities with the tools that actually help you pass.
+        </p>
 
-      {/* Call to Action */}
-      <section className="text-center py-20 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <h3 className="text-3xl font-bold mb-4">Ready to Learn Smarter?</h3>
-        <p className="mb-6 text-lg">Join thousands of students who are already studying better with UniLearn.</p>
-        <div className="flex justify-center gap-4">
-          <input
-            type="email"
-            placeholder="Enter your email"
-            className="px-4 py-3 rounded-xl text-gray-800 w-72"
+        <div className="mt-12 grid gap-6 md:grid-cols-3">
+          <Feature
+            icon={<BookOpen className="h-6 w-6" />}
+            title="Full Syllabus"
+            text="Up-to-date syllabuses and complete lecture notes, course by course."
           />
-          <button className="bg-pink-500 px-6 py-3 rounded-xl hover:opacity-90">
-            Join Now 🎉
-          </button>
+          <Feature
+            icon={<Brain className="h-6 w-6" />}
+            title="AI Exam Prep"
+            text="AI generates past questions & explanations tailored to your courses."
+          />
+          <Feature
+            icon={<Calendar className="h-6 w-6" />}
+            title="Stay Organized"
+            text="Keep tabs on classes, assignments and exam dates in one place."
+          />
         </div>
       </section>
 
-      {/* Footer */}
-      <footer id="contact" className="bg-gray-900 text-gray-200 py-10 mt-10">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-          <p className="text-sm">© {new Date().getFullYear()} UniLearn. All Rights Reserved.</p>
-          <div className="space-x-6 mt-4 md:mt-0">
-            <a href="#" className="hover:text-white">Privacy</a>
-            <a href="#" className="hover:text-white">Terms</a>
-            <a href="#" className="hover:text-white">Support</a>
+      {/* ABOUT / TRUST */}
+      <section id="about" className="bg-gray-50 py-16">
+        <div className="mx-auto max-w-6xl px-6">
+          <div className="grid items-center gap-10 md:grid-cols-2">
+            <div>
+              <h3 className="text-2xl font-bold">Built for real students</h3>
+              <p className="mt-3 text-gray-700">
+                UniLearn focuses on what boosts grades: clear syllabuses, concise notes,
+                and an AI tutor that explains exactly what you’re stuck on.
+              </p>
+              <ul className="mt-6 space-y-2 text-gray-700">
+                <li>• Federal & state universities coverage</li>
+                <li>• Course-specific past questions</li>
+                <li>• Mobile-first, fast and reliable</li>
+              </ul>
+            </div>
+            <div className="rounded-3xl border border-black/10 bg-white p-2 shadow-lg">
+              <img
+                src="/students-grid.jpg"
+                alt="Students using UniLearn"
+                className="h-[320px] w-full rounded-2xl object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA / EMAIL */}
+      <section id="cta" className="relative overflow-hidden py-20">
+        <div className="absolute inset-0 bg-[conic-gradient(at_top_right,_var(--tw-gradient-stops))] from-indigo-500 via-fuchsia-500 to-rose-500 opacity-20" />
+        <div className="relative mx-auto max-w-4xl rounded-3xl border border-black/10 bg-white/80 p-8 shadow-xl">
+          <h3 className="text-center text-2xl font-bold">
+            Ready to learn smarter?
+          </h3>
+          <p className="mt-2 text-center text-gray-700">
+            Join the waitlist — we’ll notify you when UniLearn launches at your campus.
+          </p>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mx-auto mt-6 flex max-w-xl flex-col items-center gap-3 sm:flex-row"
+          >
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              className="w-full flex-1 rounded-xl border border-black/10 bg-white px-4 py-3 outline-none focus:ring-2 focus:ring-indigo-500"
+            />
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="w-full rounded-xl bg-indigo-600 px-6 py-3 text-white hover:bg-indigo-700 sm:w-auto"
+            >
+              {status === "sending" ? "Submitting..." : "Join Now"}
+            </button>
+          </form>
+
+          {status === "ok" && (
+            <p className="mt-3 text-center text-green-600">
+              Thanks! You’re on the list. 🎉
+            </p>
+          )}
+          {status === "error" && (
+            <p className="mt-3 text-center text-rose-600">
+              Oops — try again in a moment.
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* FOOTER */}
+      <footer className="border-t border-black/5 py-10">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
+          <div className="flex items-center gap-3">
+            <img src="/unilearn-logo.svg" alt="UniLearn" className="h-7 w-7" />
+            <span className="font-semibold">UniLearn</span>
+          </div>
+          <p className="text-sm text-gray-600">
+            © {new Date().getFullYear()} UniLearn. All rights reserved.
+          </p>
+          <div className="flex gap-6 text-sm text-gray-700">
+            <a href="#" className="hover:opacity-80">Privacy</a>
+            <a href="#" className="hover:opacity-80">Terms</a>
+            <a href="#" className="hover:opacity-80">Support</a>
           </div>
         </div>
       </footer>
     </main>
+  );
+}
+
+function Feature({ icon, title, text }) {
+  return (
+    <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition hover:shadow-lg">
+      <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-50 text-indigo-700">
+        {icon}
+      </div>
+      <h4 className="text-lg font-semibold">{title}</h4>
+      <p className="mt-1 text-gray-700">{text}</p>
+    </div>
   );
 }
